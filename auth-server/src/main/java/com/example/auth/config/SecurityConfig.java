@@ -15,7 +15,8 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // Disable CSRF for simplicity in this lab
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/auth/login").permitAll() // Allow access to /auth/login
+                        .requestMatchers("/api/auth/login").permitAll() // Allow access to /api/auth/login
+                        .requestMatchers("/actuator/**").permitAll() // Allow access to actuator endpoints
                         .anyRequest().authenticated()); // All other requests need authentication
         return http.build();
     }

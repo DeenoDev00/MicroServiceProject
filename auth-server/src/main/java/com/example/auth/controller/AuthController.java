@@ -13,13 +13,12 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Date;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 public class AuthController {
-
 
     private static final String HARDCODED_USERNAME = "user";
     private static final String HARDCODED_PASSWORD = "password";
-    private static final String JWT_SECRET = "your-secret-key"; // Replace with a strong, environment-specific secret
+    private static final String JWT_SECRET = "your-256-bit-secret"; // Using the same secret as in docker-compose.yml
     private static final long JWT_EXPIRATION_MS = 3600000; // 1 hour
 
     @PostMapping("/login")

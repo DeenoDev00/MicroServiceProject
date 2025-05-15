@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  api-gateway:
+    image: api-gateway:0.0.1-SNAPSHOT
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_CLOUD_GATEWAY_ROUTES[0].ID=auth-server-route
+      - SPRING_CLOUD_GATEWAY_ROUTES[0].URI=http://auth-server:8080
+      - SPRING_CLOUD_GATEWAY_ROUTES[0].PREDICATES[0]=Path=/api/auth/**
+      - SPRING_CLOUD_GATEWAY_ROUTES[0].FILTERS[0]=StripPrefix=1
+      - SPRING_CLOUD_GATEWAY_ROUTES[1].ID=joke-service-route
+      - SPRING_CLOUD_GATEWAY_ROUTES[1].URI=http://joke-service:8082
+      - SPRING_CLOUD_GATEWAY_ROUTES[1].PREDICATES[0]=Path=/api/joke/**
+      - SPRING_CLOUD_GATEWAY_ROUTES[1].FILTERS[0]=StripPrefix=1
+      - SPRING_CLOUD_GATEWAY_ROUTES[1].FILTERS[1]=JwtValidationFilterFactory
+      - SPRING_CLOUD_GATEWAY_ROUTES[2].ID=quote-service-route
+      - SPRING_CLOUD_GATEWAY_ROUTES[2].URI=http://quote-service:8083
+      - SPRING_CLOUD_GATEWAY_ROUTES[2].PREDICATES[0]=Path=/api/quote/**
+      - SPRING_CLOUD_GATEWAY_ROUTES[2].FILTERS[0]=StripPrefix=1
+      - SPRING_CLOUD_GATEWAY_ROUTES[2].FILTERS[1]=JwtValidationFilterFactory
+      - JWT_SECRET=your-256-bit-secret
+      - SPRING_PROFILES_ACTIVE=prod
+    depends_on:
+      - auth-server
+      - joke-service
+      - quote-service
+
+  auth-server:
+    image: auth-server:0.0.1-SNAPSHOT
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - JWT_SECRET=your-256-bit-secret
+      - SPRING_SECURITY_USER_NAME=admin
+      - SPRING_SECURITY_USER_PASSWORD=admin
+
+  joke-service:
+    image: joke-service:0.0.1-SNAPSHOT
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - JWT_SECRET=your-256-bit-secret
+
+  quote-service:
+    image: quote-service:0.0.1-SNAPSHOT
+    ports:
+      - "8083:8083"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - JWT_SECRET=your-256-bit-secret
+
+networks:
+  default:
+    name: microservices-network

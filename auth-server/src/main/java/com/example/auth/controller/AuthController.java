@@ -5,6 +5,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.example.auth.model.UserCredentials;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,14 +18,20 @@ import java.util.Date;
 public class AuthController {
 
     private static final String HARDCODED_USERNAME = "user";
-    private static final String HARDCODED_PASSWORD = "password";
+    private static final String HARDCODED_PASSWORD = "$2a$10$GRLdNijSQMUvl/au9ofL.eDwmoohzzS7.rmNSJZ.0FxO/BTk76klW"; // "password" encoded with BCrypt
     private static final String JWT_SECRET = "your-256-bit-secret"; // Using the same secret as in docker-compose.yml
     private static final long JWT_EXPIRATION_MS = 3600000; // 1 hour
+
+    private final PasswordEncoder passwordEncoder;
+
+    public AuthController(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody UserCredentials credentials) {
         if (HARDCODED_USERNAME.equals(credentials.getUsername()) &&
-                HARDCODED_PASSWORD.equals(credentials.getPassword())) {
+                passwordEncoder.matches(credentials.getPassword(), HARDCODED_PASSWORD)) {
 
             Algorithm algorithm = Algorithm.HMAC256(JWT_SECRET);
             String token = JWT.create()

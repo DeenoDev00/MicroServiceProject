@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-gateway
+  labels:
+    app: api-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-gateway
+  template:
+    metadata:
+      labels:
+        app: api-gateway
+    spec:
+      containers:
+      - name: api-gateway
+        image: api-gateway:0.0.1-SNAPSHOT
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8081
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: "prod"
+        - name: AUTH_SERVER_URL
+          value: "http://auth-server:8080"
+        - name: JOKE_SERVICE_URL
+          value: "http://joke-service:8082"
+        - name: QUOTE_SERVICE_URL
+          value: "http://quote-service:8083"
+        - name: SERVER_PORT
+          value: "8081"
+        - name: SPRING_CONFIG_LOCATION
+          value: "file:/app/config/application.yml"
+        volumeMounts:
+        - name: config-volume
+          mountPath: /app/config
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8081
+          initialDelaySeconds: 60
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8081
+          initialDelaySeconds: 30
+          periodSeconds: 5
+      volumes:
+      - name: config-volume
+        configMap:
+          name: api-gateway-config 

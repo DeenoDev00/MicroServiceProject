@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: joke-service
+  labels:
+    app: joke-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: joke-service
+  template:
+    metadata:
+      labels:
+        app: joke-service
+    spec:
+      containers:
+      - name: joke-service
+        image: joke-service:0.0.1-SNAPSHOT
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8082
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: "prod" 

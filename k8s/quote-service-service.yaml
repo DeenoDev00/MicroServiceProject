@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: quote-service
+spec:
+  selector:
+    app: quote-service
+  ports:
+    - protocol: TCP
+      port: 8083
+      targetPort: 8083
+  type: ClusterIP 

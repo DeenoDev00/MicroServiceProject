@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Random;
 
 @RestController
-@RequestMapping("/quote")
+@RequestMapping("/")
 public class QuoteController {
 
     private static final List<String> QUOTES = List.of(

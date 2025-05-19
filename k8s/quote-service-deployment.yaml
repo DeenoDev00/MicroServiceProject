@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: quote-service
+  labels:
+    app: quote-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: quote-service
+  template:
+    metadata:
+      labels:
+        app: quote-service
+    spec:
+      containers:
+      - name: quote-service
+        image: quote-service:0.0.1-SNAPSHOT
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8083
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: "prod" 

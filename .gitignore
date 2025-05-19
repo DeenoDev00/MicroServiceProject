@@ -1,0 +1,11 @@
+# IntelliJ IDEA
+.idea/
+*.iml
+
+# Maven / Gradle
+target/
+build/
+
+# OS-filer
+.DS_Store
+Thumbs.db

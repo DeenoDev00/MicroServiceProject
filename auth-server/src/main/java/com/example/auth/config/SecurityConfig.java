@@ -24,9 +24,11 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // Disable CSRF for simplicity in this lab
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/auth/login").permitAll() // Allow access to /api/auth/login
+                        .requestMatchers("/login").permitAll() // Allow access to /api/auth/login
                         .requestMatchers("/actuator/**").permitAll() // Allow access to actuator endpoints
                         .anyRequest().authenticated()); // All other requests need authentication
         return http.build();
     }
+
+
 }
